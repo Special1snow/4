@@ -54,18 +54,20 @@ if page == "역량 입력 및 비교":
     st.header('자신의 역량 점수 입력')
     user_skills = {}
     
-    # 수정된 부분: 10개씩 3줄로 나누고 수직 슬라이더 적용
+    # 수정된 부분: 슬라이더 레이아웃 변경 및 타입 체크 추가
     skills = df['Skill'].tolist()
-    for i in range(0, 30, 10):
-        cols = st.columns(10)
-        for j, col in enumerate(cols):
+    for i in range(0, len(skills), 3):
+        cols = st.columns(3)
+        for j in range(3):
             if i + j < len(skills):
                 skill = skills[i + j]
-                user_skills[skill] = col.slider(
-                    f'{skill}',
-                    0.0, 10.0, 5.0, 0.1,
-                    key=f'skill_{i+j}',
-                    vertical=True  # 수직 슬라이더로 변경
+                user_skills[str(skill)] = cols[j].slider(
+                    f'{str(skill)}',
+                    min_value=0.0,
+                    max_value=10.0,
+                    value=5.0,
+                    step=0.1,
+                    key=f'skill_{i+j}'
                 )
 
     # Calculate similarity scores
