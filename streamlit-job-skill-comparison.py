@@ -174,5 +174,3 @@ elif page == "직무별 요구 역량 점수":
     st.subheader(f'{selected_job} 직무 요구 역량')
     job_skills = df[['Skill', selected_job]].sort_values(selected_job, ascending=False)
     st.write(job_skills)
-    
-```
