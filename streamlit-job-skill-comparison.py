@@ -1,3 +1,8 @@
+죄송합니다. 코드의 마지막 부분이 잘렸네요. 해당 부분을 수정하여 전체 코드를 다시 제공해 드리겠습니다.
+
+
+
+```python
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -173,4 +178,9 @@ elif page == "직무별 요구 역량 점수":
     # Display selected job's skills
     st.subheader(f'{selected_job} 직무 요구 역량')
     job_skills = df[['Skill', selected_job]].sort_values(selected_job, ascending=False)
-    st.write(job_
+    st.write(job_skills)
+    
+    # Visualize selected job's skills
+    fig = go.Figure(data=[go.Bar(x=job_skills['Skill'], y=job_skills[selected_job])])
+    fig.update_layout(
+```
