@@ -62,7 +62,7 @@ if page == "역량 입력 및 비교":
     for row in range(rows):
         cols = st.columns(min(3,len(skills)-row*10)) #Create columns for each row
         for i in range(row*10,min((row+1)*10, len(skills))):
-            with cols[i% 10)//3]:
+            with cols[(i % 10) // 3]:
                 user_skills[skills[i]]=svs.vertical_sliter(key=f'skill_{i}',
                                                            default_values=7.0,
                                                            step=0.5,
