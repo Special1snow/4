@@ -50,25 +50,48 @@ page = st.sidebar.selectbox("페이지 선택", ["역량 입력 및 비교", "�
 if page == "역량 입력 및 비교":
     st.title('직무별 역량 비교 분석')
 
+    # CSS for vertical sliders
+    st.markdown("""
+    <style>
+    .stSlider {
+        transform: rotate(270deg);
+        width: 20px !important;
+        height: 200px;
+        padding-left: 0px;
+    }
+    .stSlider > div > div > div {
+        transform: translate(95px, 0px);
+    }
+    .slider-label {
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        white-space: nowrap;
+        padding-bottom: 10px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
     # User input for skills
     st.header('자신의 역량 점수 입력')
     user_skills = {}
     
-    # 수정된 부분: 슬라이더 레이아웃 변경 및 타입 체크 추가
     skills = df['Skill'].tolist()
-    for i in range(0, len(skills), 3):
-        cols = st.columns(3)
-        for j in range(3):
-            if i + j < len(skills):
-                skill = skills[i + j]
-                user_skills[str(skill)] = cols[j].slider(
-                    f'{str(skill)}',
-                    min_value=0.0,
-                    max_value=10.0,
-                    value=5.0,
-                    step=0.1,
-                    key=f'skill_{i+j}'
-                )
+    cols = st.columns(3)
+    for col_index, col in enumerate(cols):
+        with col:
+            for i in range(10):
+                if col_index * 10 + i < len(skills):
+                    skill = skills[col_index * 10 + i]
+                    st.markdown(f'<p class="slider-label">{skill}</p>', unsafe_allow_html=True)
+                    user_skills[str(skill)] = st.slider(
+                        '',  # Empty label here as we're using custom labels
+                        min_value=0.0,
+                        max_value=10.0,
+                        value=5.0,
+                        step=0.1,
+                        key=f'skill_{col_index}_{i}'
+                    )
+                    st.write(f"{user_skills[str(skill)]:.1f}")
 
     # Calculate similarity scores
     def calculate_similarity(user_scores, job_scores):
@@ -153,6 +176,4 @@ elif page == "직무별 요구 역량 점수":
     st.write(job_skills)
     
     # Visualize selected job's skills
-    fig = go.Figure(data=[go.Bar(x=job_skills['Skill'], y=job_skills[selected_job])])
-    fig.update_layout(title=f'{selected_job} 직무 요구 역량', xaxis_title='역량', yaxis_title='점수')
-    st.plotly_chart(fig)
+    fig = go.Figure(data=[go.
