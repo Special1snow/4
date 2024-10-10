@@ -50,11 +50,26 @@ page = st.sidebar.selectbox("페이지 선택", ["역량 입력 및 비교", "�
 if page == "역량 입력 및 비교":
     st.title('직무별 역량 비교 분석')
 
-    # User input for skills
-    st.header('자신의 역량 점수 입력')
+    # User input for skills using vertical sliders
+    st.header('본인의 역량 점수 입력')
+
+    skills = df['skill'].tolist()
     user_skills = {}
-    for skill in df['Skill']:
-        user_skills[skill] = st.slider(f'{skill}', 0.0, 10.0, 5.0, 0.1)
+
+    rows = len(skills) // 10 + (len(skills)%10>0) # Calcuate number of rows needed
+    
+    for row in range(rows):
+        cols = st.columns(min(3,len(skills)-row*10)) #Create columns for each row
+        for i in range(row*10,min((row+1)*10, len(skills))):
+            with cols[i% 10)//3]:
+                user_skills[skills[i]]=svs.vertical_sliter(key=f'skill_{i}',
+                                                           default_values=7.0,
+                                                           step=0.5,
+                                                           min_value=3.0,
+                                                           max_value=10.0,
+                                                           slider_color='green',
+                                                           track_color='lightgray',
+                                                           thumb_color='red')
 
     # Calculate similarity scores
     def calculate_similarity(user_scores, job_scores):
