@@ -83,7 +83,7 @@ if page == "역량 입력 및 비교":
                 if col_index * 10 + i < len(skills):
                     skill = skills[col_index * 10 + i]
                     st.markdown(f'<p class="slider-label">{skill}</p>', unsafe_allow_html=True)
-                    user_skills[str(skill)] = st.slider(
+                    user_skills[str(skill)] = col.slider(
                         '',  # Empty label here as we're using custom labels
                         min_value=0.0,
                         max_value=10.0,
@@ -173,7 +173,4 @@ elif page == "직무별 요구 역량 점수":
     # Display selected job's skills
     st.subheader(f'{selected_job} 직무 요구 역량')
     job_skills = df[['Skill', selected_job]].sort_values(selected_job, ascending=False)
-    st.write(job_skills)
-    
-    # Visualize selected job's skills
-    fig = go.Figure(data=[go.
+    st.write(job_
