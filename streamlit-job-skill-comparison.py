@@ -176,12 +176,12 @@ elif page == "직무별 요구 역량 점수":
 
     # Gap 분석 함수 추가
     def calculate_gap(user_skills, job_skills):
-    gaps = {}
-    for skill, user_score in user_skills.items():
-        job_score = job_skills[skill]
-        gap = job_score - user_score
-        gaps[skill] = gap
-    return gaps
+        gaps = {}
+        for skill, user_score in user_skills.items():
+            job_score = job_skills[skill]
+            gap = job_score - user_score
+            gaps[skill] = gap
+        return gaps
 
     # 메인 페이지 선택 옵션에 'Gap 분석' 추가
     page = st.sidebar.selectbox("페이지 선택", ["역량 입력 및 비교", "직무별 요구 역량 점수", "Gap 분석"])
