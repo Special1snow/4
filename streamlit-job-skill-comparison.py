@@ -174,22 +174,65 @@ elif page == "직무별 요구 역량 점수":
     fig.update_layout(title=f'{selected_job} 직무 요구 역량', xaxis_title='역량', yaxis_title='점수')
     st.plotly_chart(fig)
 
-    # Gap 분석 함수 추가
-    def calculate_gap(user_skills, job_skills):
-        gaps = {}
-        for skill, user_score in user_skills.items():
-            job_score = job_skills[skill]
-            gap = job_score - user_score
-            gaps[skill] = gap
-        return gaps
+# Load the job skills data
+@st.cache_data
+def load_data():
+    # 데이터 로딩 코드는 그대로 유지
+    # ...
+    return pd.DataFrame(data)
 
-    # 메인 페이지 선택 옵션에 'Gap 분석' 추가
-    page = st.sidebar.selectbox("페이지 선택", ["역량 입력 및 비교", "직무별 요구 역량 점수", "Gap 분석"])
+df = load_data()
+
+# Gap 분석 함수
+def calculate_gap(user_skills, job_skills):
+    gaps = {}
+    for skill, user_score in user_skills.items():
+        job_score = job_skills[skill]
+        gap = job_score - user_score
+        gaps[skill] = gap
+    return gaps
+
+# 메인 페이지 선택 옵션
+page = st.sidebar.selectbox("페이지 선택", ["역량 입력 및 비교", "직무별 요구 역량 점수", "Gap 분석"])
+
+if page == "역량 입력 및 비교":
+    st.title('직무별 역량 비교 분석')
+
+    # User input for skills
+    st.header('자신의 역량 점수 입력')
+    user_skills = {}
+    
+    skills = df['Skill'].tolist()
+    for i in range(0, len(skills), 3):
+        cols = st.columns(3)
+        for j in range(3):
+            if i + j < len(skills):
+                skill = skills[i + j]
+                user_skills[str(skill)] = cols[j].slider(
+                    f'{str(skill)}',
+                    min_value=0.0,
+                    max_value=10.0,
+                    value=5.0,
+                    step=0.1,
+                    key=f'skill_{i+j}'
+                )
+    
+    # 사용자 입력을 세션 상태로 저장
+    st.session_state.user_skills = user_skills
+
+    # 나머지 "역량 입력 및 비교" 페이지 코드
+    # ...
+
+elif page == "직무별 요구 역량 점수":
+    st.title('직무별 요구 역량 점수')
+    
+    # "직무별 요구 역량 점수" 페이지 코드
+    # ...
 
 elif page == "Gap 분석":
     st.title('역량 Gap 분석')
 
-    # 사용자 역량 불러오기 (이전 페이지에서 입력한 값을 세션 상태로 저장했다고 가정)
+    # 사용자 역량 불러오기
     if 'user_skills' not in st.session_state:
         st.error("먼저 '역량 입력 및 비교' 페이지에서 자신의 역량을 입력해주세요.")
         st.stop()
@@ -228,9 +271,3 @@ elif page == "Gap 분석":
     st.plotly_chart(fig)
 
     st.write("이 분석은 선택한 직무에서 요구하는 역량과 현재 본인의 역량 사이의 차이를 보여줍니다. Gap이 큰 역량일수록 개선의 여지가 크다는 것을 의미합니다.")
-
-    # '역량 입력 및 비교' 페이지에서 사용자 입력을 세션 상태로 저장하는 코드 추가
-    if page == "역량 입력 및 비교":
-
-    # 사용자 입력을 세션 상태로 저장
-    st.session_state.user_skills = user_skills
