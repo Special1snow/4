@@ -53,7 +53,7 @@ if page == "역량 입력 및 비교":
     # User input for skills
     st.header('자신의 역량 점수 입력')
     if 'user_skills' not in st.session_state:
-    st.session_state.user_skills = {}
+        st.session_state.user_skills = {}
 
     skills = df['Skill'].tolist()
     for i in range(0, len(skills), 3):
