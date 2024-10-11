@@ -65,7 +65,7 @@ if page == "역량 입력 및 비교":
                     f'{str(skill)}',
                     min_value=3.0,
                     max_value=10.0,
-                    value=5.0,
+                    value=7.0,
                     step=0.5,
                     key=f'skill_{i+j}'
                 )
