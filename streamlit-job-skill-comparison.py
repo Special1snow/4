@@ -222,10 +222,10 @@ if page == "역량 입력 및 비교":
     desired_job = st.selectbox('희망 직무 선택', df.columns[1:])
     
     # 역량 차이 계산
-if 'user_skills' in st.session_state and st.session_state.user_skills:    
-    user_skills_series = pd.Series(st.session_state.user_skills)
-    skill_gaps = df[desired_job] - pd.Series(user_skills)
-    skill_gaps = skill_gaps[skill_gaps > 0]  # 양수 값만 선택 (개선이 필요한 역량)
+    if 'user_skills' in st.session_state and st.session_state.user_skills:    
+        user_skills_series = pd.Series(st.session_state.user_skills)
+        skill_gaps = df[desired_job] - pd.Series(user_skills)
+        skill_gaps = skill_gaps[skill_gaps > 0]  # 양수 값만 선택 (개선이 필요한 역량)
     
     # 상위 5개 개선 필요 역량
     top_5_gaps = skill_gaps.nlargest(5)
@@ -244,8 +244,8 @@ if 'user_skills' in st.session_state and st.session_state.user_skills:
     st.subheader('추천 교육 과정 (상위 5개):')
     for i, (index, row) in enumerate(recommended_courses.iterrows(), 1):
         st.write(f"{i}. {course_df.loc[index, 'Course Name']} (점수: {row['Total Score']:.2f})")
-else:
-    st.warning("먼저 역량 점수를 입력해 주세요.")
+    else:
+        st.warning("먼저 역량 점수를 입력해 주세요.")
     
     st.write("이 교육 과정들은 현재 역량과 희망 직무 사이의 격차를 줄이는 데 도움이 될 것입니다.")
 
