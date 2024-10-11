@@ -63,10 +63,10 @@ if page == "역량 입력 및 비교":
                 skill = skills[i + j]
                 user_skills[str(skill)] = cols[j].slider(
                     f'{str(skill)}',
-                    min_value=0.0,
+                    min_value=3.0,
                     max_value=10.0,
                     value=5.0,
-                    step=0.1,
+                    step=0.5,
                     key=f'skill_{i+j}'
                 )
 
