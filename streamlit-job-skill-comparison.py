@@ -173,3 +173,72 @@ elif page == "직무별 요구 역량 점수":
     fig = go.Figure(data=[go.Bar(x=job_skills['Skill'], y=job_skills[selected_job])])
     fig.update_layout(title=f'{selected_job} 직무 요구 역량', xaxis_title='역량', yaxis_title='점수')
     st.plotly_chart(fig)
+
+    # Gap 분석 함수 추가
+    def calculate_gap(user_skills, job_skills):
+    gaps = {}
+    for skill, user_score in user_skills.items():
+        job_score = job_skills[skill]
+        gap = job_score - user_score
+        gaps[skill] = gap
+    return gaps
+
+    # 메인 페이지 선택 옵션에 'Gap 분석' 추가
+    page = st.sidebar.selectbox("페이지 선택", ["역량 입력 및 비교", "직무별 요구 역량 점수", "Gap 분석"])
+
+if page == "역량 입력 및 비교":
+    # 기존의 '역량 입력 및 비교' 페이지 코드
+    # ...
+
+elif page == "직무별 요구 역량 점수":
+    # 기존의 '직무별 요구 역량 점수' 페이지 코드
+    # ...
+
+elif page == "Gap 분석":
+    st.title('역량 Gap 분석')
+
+    # 사용자 역량 불러오기 (이전 페이지에서 입력한 값을 세션 상태로 저장했다고 가정)
+    if 'user_skills' not in st.session_state:
+        st.error("먼저 '역량 입력 및 비교' 페이지에서 자신의 역량을 입력해주세요.")
+        st.stop()
+
+    user_skills = st.session_state.user_skills
+
+    # 직무 선택
+    selected_job = st.selectbox('비교할 직무 선택', df.columns[1:])
+
+    # 선택된 직무의 스킬 점수
+    job_skills = dict(zip(df['Skill'], df[selected_job]))
+
+    # Gap 계산
+    gaps = calculate_gap(user_skills, job_skills)
+
+    # Gap을 내림차순으로 정렬
+    sorted_gaps = sorted(gaps.items(), key=lambda x: x[1], reverse=True)
+
+    # 결과 표시
+    st.subheader("개선이 필요한 역량 (Gap이 큰 순서):")
+    gap_df = pd.DataFrame(sorted_gaps, columns=['역량', 'Gap'])
+    gap_df['현재 점수'] = gap_df['역량'].map(user_skills)
+    gap_df['목표 점수'] = gap_df['역량'].map(job_skills)
+    gap_df = gap_df[gap_df['Gap'] > 0]  # 양수 Gap만 표시
+    gap_df = gap_df.reset_index(drop=True)
+    gap_df.index = gap_df.index + 1  # 인덱스를 1부터 시작하도록 설정
+    st.table(gap_df)
+
+    # 상위 5개 개선 필요 역량에 대한 막대 그래프
+    top_5_gaps = gap_df.head()
+    fig = go.Figure(data=[
+        go.Bar(name='현재 점수', x=top_5_gaps['역량'], y=top_5_gaps['현재 점수']),
+        go.Bar(name='목표 점수', x=top_5_gaps['역량'], y=top_5_gaps['목표 점수'])
+    ])
+    fig.update_layout(barmode='group', title='상위 5개 개선 필요 역량', xaxis_title='역량', yaxis_title='점수')
+    st.plotly_chart(fig)
+
+    st.write("이 분석은 선택한 직무에서 요구하는 역량과 현재 본인의 역량 사이의 차이를 보여줍니다. Gap이 큰 역량일수록 개선의 여지가 크다는 것을 의미합니다.")
+
+    # '역량 입력 및 비교' 페이지에서 사용자 입력을 세션 상태로 저장하는 코드 추가
+    if page == "역량 입력 및 비교":
+
+    # 사용자 입력을 세션 상태로 저장
+    st.session_state.user_skills = user_skills
