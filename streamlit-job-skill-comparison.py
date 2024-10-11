@@ -52,24 +52,24 @@ if page == "역량 입력 및 비교":
 
     # User input for skills
     st.header('자신의 역량 점수 입력')
-    user_skills = {}
-    
-    # 수정된 부분: 슬라이더 레이아웃 변경 및 타입 체크 추가
+    if 'user_skills' not in st.session_state:
+    st.session_state.user_skills = {}
+
     skills = df['Skill'].tolist()
     for i in range(0, len(skills), 3):
         cols = st.columns(3)
         for j in range(3):
             if i + j < len(skills):
                 skill = skills[i + j]
-                user_skills[str(skill)] = cols[j].slider(
-                    f'{str(skill)}',
+                st.session_state.user_skills[skill] = cols[j].slider(
+                    f'{skill}',
                     min_value=3.0,
                     max_value=10.0,
                     value=7.0,
                     step=0.5,
                     key=f'skill_{i+j}'
                 )
-
+  
     # Calculate similarity scores
     def calculate_similarity(user_scores, job_scores):
         return np.mean(1 - np.abs(np.array(list(user_scores)) - np.array(job_scores)) / 10)
@@ -222,6 +222,7 @@ if page == "역량 입력 및 비교":
     desired_job = st.selectbox('희망 직무 선택', df.columns[1:])
     
     # 역량 차이 계산
+if 'user_skills' in st.session_state and st.session_state.user_skills:    
     user_skills_series = pd.Series(st.session_state.user_skills)
     skill_gaps = df[desired_job] - pd.Series(user_skills)
     skill_gaps = skill_gaps[skill_gaps > 0]  # 양수 값만 선택 (개선이 필요한 역량)
@@ -236,13 +237,15 @@ if page == "역량 입력 및 비교":
     course_scores = pd.DataFrame()
     for skill in top_5_gaps.index:
         course_scores[skill] = course_df[skill] * top_5_gaps[skill]
-    
+
     course_scores['Total Score'] = course_scores.sum(axis=1)
     recommended_courses = course_scores.nlargest(5, 'Total Score')
-    
+
     st.subheader('추천 교육 과정 (상위 5개):')
     for i, (index, row) in enumerate(recommended_courses.iterrows(), 1):
         st.write(f"{i}. {course_df.loc[index, 'Course Name']} (점수: {row['Total Score']:.2f})")
+else:
+    st.warning("먼저 역량 점수를 입력해 주세요.")
     
     st.write("이 교육 과정들은 현재 역량과 희망 직무 사이의 격차를 줄이는 데 도움이 될 것입니다.")
 
