@@ -8,18 +8,18 @@ import plotly.graph_objects as go
 def load_data():
     data = {
         'Skill': [
-            'Analytical thinking', 'Creative thinking', 'Resilience, Flexibility and agility',
-            'Motivation and self-awareness', 'Curiosity and lifelong learning',
-            'Technological literacy', 'Dependability and attention to detail',
-            'Empathy and active listening', 'Leadership and social influence',
-            'Quality control', 'Systems thinking', 'Talent management',
-            'Service orientation and customer service', 'Resource management and operations',
-            'AI and big data', 'Reading, writing and mathematics',
-            'Design and user experience', 'Multi-lingualism', 'Teaching and mentoring',
-            'Programming', 'Marketing and media', 'Networks and cybersecurity',
-            'Environmental stewardship', 'Manual dexterity, endurance and precision',
-            'Global citizenship', 'Sensory-processing abilities', 'Communication and speech',
-            'Story telling', 'Business insight', 'MS Office (Excel, PPT, etc)'
+            '분석적 사고', '창의적 사고', '유연성과 민첩성',
+            '동기부여', '자기개발',
+            '기술력', '섬세함',
+            '공감과 경청', '리더십과 영향력',
+            '품질 관리', '시스템 사고', '인재 관리',
+            '고객 서비스', '자원 관리 및 운영',
+            'AI 및 빅데이터', '읽기,쓰기',
+            '사용자 경험', '외국어', '교육 및 멘토링',
+            '프로그래밍', '마케팅 및 미디어', '사이버 보안',
+            '환경 관리', '지구력 및 정밀도',
+            'Globality', '직관력', '커뮤니케이션',
+            '스토리텔링', 'Biz통찰력', 'MS Office(엑셀,PPT)'
         ],
         '전략/기획': [8.2, 8.5, 8.4, 8.1, 7.8, 7.0, 8.6, 6.9, 9.0, 8.7, 7.7, 8.8, 7.0, 8.0, 7.6, 9.0, 5.8, 6.8, 8.6, 6.9, 8.3, 7.7, 5.5, 8.2, 7.6, 7.0, 8.5, 8.4, 9.2, 8.1],
         '성과관리': [6.5, 5.1, 6.7, 7.6, 5.3, 5.5, 8.1, 5.4, 7.1, 8.2, 8.4, 7.2, 6.4, 7.9, 5.3, 9.1, 4.1, 5.4, 7.4, 4.0, 4.3, 4.5, 4.8, 5.2, 5.3, 5.5, 6.3, 6.2, 7.6, 5.7],
