@@ -81,14 +81,31 @@ if page == "역량 입력 및 비교":
     # Display results
     st.header('직무 적합도 분석 결과')
     result_df = pd.DataFrame(list(similarities.items()), columns=['직무', '적합도'])
+    result_df['적합도'] = result_df['적합도'].round(2)  # 소수점 둘째 자리까지 반올림
     result_df = result_df.sort_values('적합도', ascending=False)
 
     st.write(result_df)
 
     # Visualize results
     st.header('직무 적합도 시각화')
-    fig = go.Figure(data=[go.Bar(x=result_df['직무'], y=result_df['적합도'])])
-    fig.update_layout(title=f'{name}님의 직무별 적합도' if name else '직무별 적합도', xaxis_title='직무', yaxis_title='적합도')
+    # 가장 높은 적합도를 가진 직무 찾기
+    max_similarity_job = result_df['직무'].iloc[0]
+
+    # 색상 리스트 생성
+    colors = ['red' if job == max_similarity_job else 'blue' for job in result_df['직무']]
+
+    fig = go.Figure(data=[go.Bar(
+    x=result_df['직무'],
+    y=result_df['적합도'],
+    marker_color=colors
+    )])
+
+    fig.update_layout(
+    title=f'{name}님의 직무별 적합도' if name else '직무별 적합도',
+    xaxis_title='직무',
+    yaxis_title='적합도'
+    )
+
     st.plotly_chart(fig)
 
     # Job selection for comparison
