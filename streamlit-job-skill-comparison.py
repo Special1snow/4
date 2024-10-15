@@ -178,66 +178,66 @@ if page == "역량 입력 및 비교":
         st.plotly_chart(fig)
 
         # 직무 선택 (비교 대상)
-        selected_job = st.selectbox('비교할 직무 선택', df.columns[1:])
+selected_job = st.selectbox('비교할 직무 선택', df.columns[1:])
 
-        if 'user_skills' in st.session_state and st.session_state.user_skills:
-            user_skills = pd.Series(st.session_state.user_skills)
-            job_skills = df[['Skill', selected_job]].set_index('Skill')[selected_job]
+if 'user_skills' in st.session_state and st.session_state.user_skills:
+    user_skills = pd.Series(st.session_state.user_skills)
+    job_skills = df[['Skill', selected_job]].set_index('Skill')[selected_job]
     
-            # 스킬 차이 계산
-            skill_gaps = job_skills - user_skills
+    # 스킬 차이 계산
+    skill_gaps = job_skills - user_skills
     
-            st.subheader('역량 차이:')
-            st.write(skill_gaps.sort_values(ascending=False))
+    st.subheader('역량 차이:')
+    st.write(skill_gaps.sort_values(ascending=False))
 
-            # 개선이 필요한 역량 (양수 값만)
-            improvement_needed = skill_gaps[skill_gaps > 0.01].sort_values(ascending=False)
-            st.subheader('개선이 필요한 역량:')
-            if not improvement_needed.empty:
-                st.write(improvement_needed)
-           else:
-                st.write("현재 모든 역량이 선택한 직무의 요구 수준을 충족하거나 초과합니다.")
+    # 개선이 필요한 역량 (양수 값만)
+    improvement_needed = skill_gaps[skill_gaps > 0.01].sort_values(ascending=False)
+    st.subheader('개선이 필요한 역량:')
+    if not improvement_needed.empty:
+        st.write(improvement_needed)
+    else:
+        st.write("현재 모든 역량이 선택한 직무의 요구 수준을 충족하거나 초과합니다.")
 
-            # 디버깅을 위한 출력
-            st.write("User Skills:")
-            st.write(user_skills)
-            st.write("Job Skills:")
-            st.write(job_skills)
-            st.write("Skill Gaps:")
-            st.write(skill_gaps)
+    # 디버깅을 위한 출력
+    st.write("User Skills:")
+    st.write(user_skills)
+    st.write("Job Skills:")
+    st.write(job_skills)
+    st.write("Skill Gaps:")
+    st.write(skill_gaps)
 
-            # 선버스트 차트 (레이더 차트) 추가
-            st.subheader(f'{selected_job} 직무와의 역량 비교')
-            fig = go.Figure()
+    # 선버스트 차트 (레이더 차트) 추가
+    st.subheader(f'{selected_job} 직무와의 역량 비교')
+    fig = go.Figure()
 
-            fig.add_trace(go.Scatterpolar(
-                r=user_skills.values,
-                theta=user_skills.index,
-                fill='toself',
-                name='Your Skills'
-            ))
+    fig.add_trace(go.Scatterpolar(
+        r=user_skills.values,
+        theta=user_skills.index,
+        fill='toself',
+        name='Your Skills'
+    ))
 
-            fig.add_trace(go.Scatterpolar(
-                r=job_skills.values,
-                theta=job_skills.index,
-                fill='toself',
-                name=f'{selected_job} Required'
-            ))
+    fig.add_trace(go.Scatterpolar(
+        r=job_skills.values,
+        theta=job_skills.index,
+        fill='toself',
+        name=f'{selected_job} Required'
+    ))
 
-            fig.update_layout(
-                polar=dict(
-                    radialaxis=dict(
-                        visible=True,
-                        range=[0, 10]
-                    )),
-                showlegend=True
-            )
+    fig.update_layout(
+        polar=dict(
+            radialaxis=dict(
+                visible=True,
+                range=[0, 10]
+            )),
+        showlegend=True
+    )
 
-            st.plotly_chart(fig)
+    st.plotly_chart(fig)
 
-            # 여기에 교육 과정 추천 코드 추가
-        else:
-            st.warning("먼저 역량 점수를 입력해 주세요.")
+    # 여기에 교육 과정 추천 코드 추가
+else:
+    st.warning("먼저 역량 점수를 입력해 주세요.")
             
         # 교육 과정 추천
         st.subheader('추천 교육 과정:')
