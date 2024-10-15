@@ -184,11 +184,13 @@ if page == "역량 입력 및 비교":
             user_skills = pd.Series(st.session_state.user_skills)
             job_skills = df[selected_job]
             
-            # 스킬 차이 계산
-            skill_gaps = pd.Series({skill: job_skills[skill] - user_skills[skill] for skill in user_skills.index})
+            # 공통된 스킬만 사용하여 스킬 차이 계산
+            common_skills = set(user_skills.index) & set(job_skills.index)
+            skill_gaps = pd.Series({skill: job_skills[skill] - user_skills[skill] for skill in common_skills})
+    
             st.subheader('역량 차이:')
             st.write(skill_gaps.sort_values(ascending=False))
-        
+
             # 개선이 필요한 역량 (양수 값만)
             improvement_needed = skill_gaps[skill_gaps > 0.01].sort_values(ascending=False)
             st.subheader('개선이 필요한 역량:')
@@ -202,30 +204,29 @@ if page == "역량 입력 및 비교":
             st.write(user_skills)
             st.write("Job Skills:")
             st.write(job_skills)
+            st.write("Common Skills:")
+            st.write(list(common_skills))
             st.write("Skill Gaps:")
             st.write(skill_gaps)
-           
-            # 상위 5개 개선 필요 역량
-            top_5_gaps = skill_gaps.nlargest(5)
-            
+
             # 선버스트 차트 (레이더 차트) 추가
             st.subheader(f'{selected_job} 직무와의 역량 비교')
             fig = go.Figure()
         
             fig.add_trace(go.Scatterpolar(
-                r=list(user_skills),
-                theta=df['Skill'],
+                r=[user_skills.get(skill, 0) for skill in common_skills],
+                theta=list(common_skills),
                 fill='toself',
                 name='Your Skills'
             ))
 
             fig.add_trace(go.Scatterpolar(
-                r=list(job_skills),
-                theta=df['Skill'],
+                r=[job_skills.get(skill, 0) for skill in common_skills],
+                theta=list(common_skills),
                 fill='toself',
                 name=f'{selected_job} Required'
             ))
-        
+
             fig.update_layout(
                 polar=dict(
                     radialaxis=dict(
@@ -236,7 +237,7 @@ if page == "역량 입력 및 비교":
             )
         
             st.plotly_chart(fig)
-    
+        
             # 여기에 교육 과정 추천 코드 추가
         else:
             st.warning("먼저 역량 점수를 입력해 주세요.")
