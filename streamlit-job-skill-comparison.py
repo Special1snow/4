@@ -197,15 +197,7 @@ if page == "역량 입력 및 비교":
                 st.write(improvement_needed)
             else:
                 st.write("현재 모든 역량이 선택한 직무의 요구 수준을 충족하거나 초과합니다.")
-
-            # 디버깅을 위한 출력
-            st.write("User Skills:")
-            st.write(user_skills)
-            st.write("Job Skills:")
-            st.write(job_skills)
-            st.write("Skill Gaps:")
-            st.write(skill_gaps)
-        
+       
             # 선버스트 차트 (레이더 차트) 추가
             st.subheader(f'{selected_job} 직무와의 역량 비교')
             fig = go.Figure()
