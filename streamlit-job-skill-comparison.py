@@ -194,31 +194,36 @@ if page == "역량 입력 및 비교":
             # 상위 5개 개선 필요 역량
             top_5_gaps = skill_gaps.head()
             
-            # 교육 과정 추천
-            st.subheader('추천 교육 과정:')
-            course_df = load_course_data()
-            
-            # 모든 부족한 스킬에 대한 교육 과정 점수 계산
-            course_scores = pd.DataFrame(index=course_df.index, columns=['Total Score'])
-            for skill in top_5_gaps.index:
-                course_scores['Total Score'] += course_df[skill]
-            
-            # 상위 5개 교육 과정 추천
+        # 교육 과정 추천
+        st.subheader('추천 교육 과정:')
+        course_df = load_course_data()
+
+        # 모든 부족한 스킬에 대한 교육 과정 점수 계산
+        course_scores = pd.DataFrame(index=course_df.index, columns=['Total Score'])
+        course_scores['Total Score'] = 0  # Initialize the column with zeros
+
+        for skill in top_5_gaps.index:
+            course_scores['Total Score'] += course_df[skill]
+
+        # 'Total Score' 열이 제대로 생성되었는지 확인
+        st.write("Course Scores:")
+        st.write(course_scores)
+
+        # 상위 5개 교육 과정 추천
+        if not course_scores.empty and 'Total Score' in course_scores.columns:
             recommended_courses = course_scores.nlargest(5, 'Total Score')
-            
+    
             for i, (index, row) in enumerate(recommended_courses.iterrows(), 1):
                 st.write(f"{i}. {course_df.loc[index, 'Course Name']} (점수: {row['Total Score']:.2f})")
-                
-                # 각 교육 과정이 어떤 스킬을 얼마나 향상시키는지 표시
-                st.write("   향상되는 스킬:")
-                for skill in top_5_gaps.index:
-                    skill_improvement = course_df.loc[index, skill]
-                    if skill_improvement > 0:
-                        st.write(f"   - {skill}: {skill_improvement:.2f}")
-            
-            st.write("\n이 교육 과정들은 현재 역량과 선택한 직무의 요구 역량 사이의 격차를 줄이는 데 도움이 될 것입니다.")
-        else:
-            st.warning("먼저 역량 점수를 입력해 주세요.")
+        
+            # 각 교육 과정이 어떤 스킬을 얼마나 향상시키는지 표시
+            st.write("   향상되는 스킬:")
+            for skill in top_5_gaps.index:
+                skill_improvement = course_df.loc[index, skill]
+                if skill_improvement > 0:
+                    st.write(f"   - {skill}: {skill_improvement:.2f}")
+            else:
+                st.warning("교육 과정 점수를 계산할 수 없습니다.")    
 
 elif page == "직무별 요구 역량 점수":
     st.title('직무별 요구 역량 점수')
