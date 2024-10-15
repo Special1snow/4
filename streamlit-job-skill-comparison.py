@@ -152,7 +152,7 @@ if page == "역량 입력 및 비교":
         result_df = pd.DataFrame(list(similarities.items()), columns=['직무', '적합도'])
         result_df['적합도'] = result_df['적합도'].round(2)  # 소수점 둘째 자리까지 반올림
         result_df = result_df.sort_values('적합도', ascending=False)
-        top_7_result_df=result_df.head(7)
+        top_7_result_df=result_df.head(7).reset_index(drop=True)
 
         st.write(top_7_result_df)
 
