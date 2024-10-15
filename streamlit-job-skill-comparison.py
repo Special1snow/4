@@ -186,10 +186,7 @@ if page == "역량 입력 및 비교":
             
             # 스킬 차이 계산
             skill_gaps = job_skills - user_skills
-            
-            st.subheader('역량 차이:')
-            st.write(skill_gaps.sort_values(ascending=False))
-        
+                          
             # 개선이 필요한 역량 (양수 값만)
             improvement_needed = skill_gaps[skill_gaps > 0.01].sort_values(ascending=False)
             st.subheader('개선이 필요한 역량:')
