@@ -192,6 +192,8 @@ if page == "역량 입력 및 비교":
             improvement_needed = skill_gaps[skill_gaps > 0.01].sort_values(ascending=False)
             st.subheader('개선이 필요한 역량:')
             if not improvement_needed.empty:
+                improvement_df=improvement_needed_index().rename(column={0:'개선필요수준'})
+                improvement_df.insert(0,'우선순위',improvement_df.index+1)
                 st.write(improvement_needed)
             else:
                 st.write("현재 모든 역량이 선택한 직무의 요구 수준을 충족하거나 초과합니다.")
