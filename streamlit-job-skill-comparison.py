@@ -206,7 +206,7 @@ if page == "역량 입력 및 비교":
                 r=user_skills.values,
                 theta=user_skills.index,
                 fill='toself',
-                name='Your Skills'
+                name='Your Skills',
                 color='red'
             ))
         
