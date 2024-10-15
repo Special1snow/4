@@ -190,7 +190,7 @@ if page == "역량 입력 및 비교":
                           
             # 개선이 필요한 역량 (양수 값만)
             improvement_needed = skill_gaps[skill_gaps > 0.01].sort_values(ascending=False)
-            st.subheader('개선이 필요한 역량:')
+            st.subheader('개선이 필요한 역량 우선순위:')
             if not improvement_needed.empty:
                 st.write(improvement_needed)
             else:
