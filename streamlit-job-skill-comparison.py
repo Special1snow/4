@@ -131,7 +131,7 @@ if page == "역량 입력 및 비교":
                 skill = skills[i + j]
                 st.session_state.user_skills[skill] = cols[j].slider(
                     f'{skill}',
-                    min_value=3.0,
+                    min_value=0.0,
                     max_value=10.0,
                     value=7.0,
                     step=0.5,
@@ -199,6 +199,35 @@ if page == "역량 입력 및 비교":
        
             # 상위 5개 개선 필요 역량
             top_5_gaps = skill_gaps.nlargest(5)
+            
+            # 선버스트 차트 (레이더 차트) 추가
+            st.subheader(f'{selected_job} 직무와의 역량 비교')
+            fig = go.Figure()
+
+            fig.add_trace(go.Scatterpolar(
+                r=list(user_skills.values()),
+                theta=df['Skill'],
+                fill='toself',
+                name='Your Skills'
+            ))
+
+            fig.add_trace(go.Scatterpolar(
+                r=list(job_skills),
+                theta=df['Skill'],
+                fill='toself',
+                name=f'{selected_job} Required'
+            ))
+
+            fig.update_layout(
+                polar=dict(
+                    radialaxis=dict(
+                        visible=True,
+                        range=[0, 10]
+                    )),
+                showlegend=True
+            )
+
+            st.plotly_chart(fig)
             
         # 교육 과정 추천
         st.subheader('추천 교육 과정:')
