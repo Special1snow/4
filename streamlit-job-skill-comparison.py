@@ -208,7 +208,7 @@ if page == "역량 입력 및 비교":
                 fill='toself',
                 name='Your Skills',
                 line=dict(color='red'),
-                fillcolor=(rgba(255,0,0,0.5)
+                fillcolor='rgba(255,0,0,0.5)'
             ))
         
             fig.add_trace(go.Scatterpolar(
