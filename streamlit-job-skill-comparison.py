@@ -183,19 +183,27 @@ if page == "역량 입력 및 비교":
         if 'user_skills' in st.session_state and st.session_state.user_skills:
             user_skills = pd.Series(st.session_state.user_skills)
             job_skills = df[selected_job]
-    
+            
             # 스킬 차이 계산
-            skill_gaps = job_skills - user_skills
+            skill_gaps = pd.Series({skill: job_skills[skill] - user_skills[skill] for skill in user_skills.index})
             st.subheader('역량 차이:')
             st.write(skill_gaps.sort_values(ascending=False))
         
             # 개선이 필요한 역량 (양수 값만)
-            improvement_needed = skill_gaps[skill_gaps > 0].sort_values(ascending=False)
+            improvement_needed = skill_gaps[skill_gaps > 0.01].sort_values(ascending=False)
             st.subheader('개선이 필요한 역량:')
             if not improvement_needed.empty:
                 st.write(improvement_needed)
             else:
                 st.write("현재 모든 역량이 선택한 직무의 요구 수준을 충족하거나 초과합니다.")
+
+            # 디버깅을 위한 출력
+            st.write("User Skills:")
+            st.write(user_skills)
+            st.write("Job Skills:")
+            st.write(job_skills)
+            st.write("Skill Gaps:")
+            st.write(skill_gaps)
            
             # 상위 5개 개선 필요 역량
             top_5_gaps = skill_gaps.nlargest(5)
