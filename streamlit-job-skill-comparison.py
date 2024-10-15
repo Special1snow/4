@@ -131,7 +131,7 @@ if page == "역량 입력 및 비교":
                 skill = skills[i + j]
                 st.session_state.user_skills[skill] = cols[j].slider(
                     f'{skill}',
-                    min_value=0.0,
+                    min_value=3.0,
                     max_value=10.0,
                     value=7.0,
                     step=0.5,
@@ -182,11 +182,10 @@ if page == "역량 입력 및 비교":
 
         if 'user_skills' in st.session_state and st.session_state.user_skills:
             user_skills = pd.Series(st.session_state.user_skills)
-            job_skills = df[selected_job]
-            
-            # 공통된 스킬만 사용하여 스킬 차이 계산
-            common_skills = set(user_skills.index) & set(job_skills.index)
-            skill_gaps = pd.Series({skill: job_skills[skill] - user_skills[skill] for skill in common_skills})
+            job_skills = df[['Skill', selected_job]].set_index('Skill')[selected_job]
+    
+            # 스킬 차이 계산
+            skill_gaps = job_skills - user_skills
     
             st.subheader('역량 차이:')
             st.write(skill_gaps.sort_values(ascending=False))
@@ -196,7 +195,7 @@ if page == "역량 입력 및 비교":
             st.subheader('개선이 필요한 역량:')
             if not improvement_needed.empty:
                 st.write(improvement_needed)
-            else:
+           else:
                 st.write("현재 모든 역량이 선택한 직무의 요구 수준을 충족하거나 초과합니다.")
 
             # 디버깅을 위한 출력
@@ -204,25 +203,23 @@ if page == "역량 입력 및 비교":
             st.write(user_skills)
             st.write("Job Skills:")
             st.write(job_skills)
-            st.write("Common Skills:")
-            st.write(list(common_skills))
             st.write("Skill Gaps:")
             st.write(skill_gaps)
 
             # 선버스트 차트 (레이더 차트) 추가
             st.subheader(f'{selected_job} 직무와의 역량 비교')
             fig = go.Figure()
-        
+
             fig.add_trace(go.Scatterpolar(
-                r=[user_skills.get(skill, 0) for skill in common_skills],
-                theta=list(common_skills),
+                r=user_skills.values,
+                theta=user_skills.index,
                 fill='toself',
                 name='Your Skills'
             ))
 
             fig.add_trace(go.Scatterpolar(
-                r=[job_skills.get(skill, 0) for skill in common_skills],
-                theta=list(common_skills),
+                r=job_skills.values,
+                theta=job_skills.index,
                 fill='toself',
                 name=f'{selected_job} Required'
             ))
@@ -235,9 +232,9 @@ if page == "역량 입력 및 비교":
                     )),
                 showlegend=True
             )
-        
+
             st.plotly_chart(fig)
-        
+
             # 여기에 교육 과정 추천 코드 추가
         else:
             st.warning("먼저 역량 점수를 입력해 주세요.")
