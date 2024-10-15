@@ -248,9 +248,10 @@ if page == "역량 입력 및 비교":
         # 상위 5개 교육 과정 추천
         if not course_scores.empty and 'Total Score' in course_scores.columns:
             recommended_courses = course_scores.nlargest(5, 'Total Score')
-
+    
             for i, (index, row) in enumerate(recommended_courses.iterrows(), 1):
-                st.write(f"{i}. {course_df.loc[index, 'Course Name']}
+                st.write(f"{i}. {course_df.loc[index, 'Course Name']} ")
+                       
         else:
             st.warning("교육 과정 점수를 계산할 수 없습니다.")
 
