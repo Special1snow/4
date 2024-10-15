@@ -113,6 +113,48 @@ if page == "역량 입력 및 비교":
         st.header('특정 직무와 비교')
         selected_job = st.selectbox('비교할 직무 선택', df.columns[1:])
 
+        if 'user_skills' in st.session_state and st.session_state.user_skills:
+            user_skills = pd.Series(st.session_state.user_skills)
+            job_skills = df[selected_job]
+            
+            # 스킬 차이 계산
+            skill_gaps = job_skills - user_skills
+            
+            # 양수 값만 선택 (개선이 필요한 역량)
+            skill_gaps = skill_gaps[skill_gaps > 0].sort_values(ascending=False)
+            
+            st.subheader('개선이 필요한 역량:')
+            st.write(skill_gaps)
+            
+            # 상위 5개 개선 필요 역량
+            top_5_gaps = skill_gaps.head()
+            
+            # 교육 과정 추천
+            st.subheader('추천 교육 과정:')
+            course_df = load_course_data()
+            
+            # 모든 부족한 스킬에 대한 교육 과정 점수 계산
+            course_scores = pd.DataFrame(index=course_df.index, columns=['Total Score'])
+            for skill, gap in top_5_gaps.items():
+                course_scores['Total Score'] += course_df[skill]
+            
+            # 상위 5개 교육 과정 추천
+            recommended_courses = course_scores.nlargest(5, 'Total Score')
+            
+            for i, (index, row) in enumerate(recommended_courses.iterrows(), 1):
+                st.write(f"{i}. {course_df.loc[index, 'Course Name']} (점수: {row['Total Score']:.2f})")
+                
+                # 각 교육 과정이 어떤 스킬을 얼마나 향상시키는지 표시
+                st.write("   향상되는 스킬:")
+                for skill in top_5_gaps.index:
+                    skill_improvement = course_df.loc[index, skill]
+                    if skill_improvement > 0:
+                        st.write(f"   - {skill}: {skill_improvement:.2f}")
+            
+            st.write("\n이 교육 과정들은 현재 역량과 선택한 직무의 요구 역량 사이의 격차를 줄이는 데 도움이 될 것입니다.")
+        else:
+            st.warning("먼저 역량 점수를 입력해 주세요.")
+
         # Radar chart for selected job
         st.subheader(f'{selected_job} 직무와의 역량 비교')
         fig = go.Figure()
