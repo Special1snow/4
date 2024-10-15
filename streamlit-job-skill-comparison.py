@@ -250,15 +250,7 @@ if page == "역량 입력 및 비교":
             recommended_courses = course_scores.nlargest(5, 'Total Score')
 
             for i, (index, row) in enumerate(recommended_courses.iterrows(), 1):
-                st.write(f"{i}. {course_df.loc[index, 'Course Name']} (점수: {row['Total Score']:.2f})")
-        
-                # 각 교육 과정이 어떤 스킬을 얼마나 향상시키는지 표시
-                st.write("   향상되는 스킬:")
-                for skill in top_5_gaps.index:
-                    if skill in course_df.columns:
-                        skill_improvement = course_df.loc[index, skill]
-                        if skill_improvement > 0:
-                            st.write(f"   - {skill}: {skill_improvement:.2f}")
+                st.write(f"{i}. {course_df.loc[index, 'Course Name']}
         else:
             st.warning("교육 과정 점수를 계산할 수 없습니다.")
 
