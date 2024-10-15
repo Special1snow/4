@@ -209,7 +209,10 @@ if page == "역량 입력 및 비교":
         course_scores['Total Score'] = 0  # Initialize the column with zeros
 
         for skill, gap in top_5_gaps.items():
-            course_scores['Total Score'] += course_df[skill] * abs(gap)
+            if skill in course_df.columns:
+                course_scores['Total Score'] += course_df[skill] * abs(gap)
+            else:
+                st.warning(f"'{skill}' 스킬에 대한 교육 과정 정보가 없습니다.")
 
         # 상위 5개 교육 과정 추천
         if not course_scores.empty and 'Total Score' in course_scores.columns:
@@ -221,20 +224,12 @@ if page == "역량 입력 및 비교":
                 # 각 교육 과정이 어떤 스킬을 얼마나 향상시키는지 표시
                 st.write("   향상되는 스킬:")
                 for skill in top_5_gaps.index:
-                    skill_improvement = course_df.loc[index, skill]
-                    if skill_improvement > 0:
-                        st.write(f"   - {skill}: {skill_improvement:.2f}")
+                    if skill in course_df.columns:
+                        skill_improvement = course_df.loc[index, skill]
+                        if skill_improvement > 0:
+                            st.write(f"   - {skill}: {skill_improvement:.2f}")
         else:
             st.warning("교육 과정 점수를 계산할 수 없습니다.")
-        
-            # 각 교육 과정이 어떤 스킬을 얼마나 향상시키는지 표시
-            st.write("   향상되는 스킬:")
-            for skill in top_5_gaps.index:
-                skill_improvement = course_df.loc[index, skill]
-                if skill_improvement > 0:
-                    st.write(f"   - {skill}: {skill_improvement:.2f}")
-            else:
-                st.warning("교육 과정 점수를 계산할 수 없습니다.")    
 
 elif page == "직무별 요구 역량 점수":
     st.title('직무별 요구 역량 점수')
