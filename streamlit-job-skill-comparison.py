@@ -207,6 +207,7 @@ if page == "역량 입력 및 비교":
                 theta=user_skills.index,
                 fill='toself',
                 name='Your Skills'
+                color='red'
             ))
         
             fig.add_trace(go.Scatterpolar(
