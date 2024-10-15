@@ -186,13 +186,19 @@ if page == "역량 입력 및 비교":
             
             # 스킬 차이 계산
             skill_gaps = job_skills - user_skills
-            skill_gaps = skill_gaps[skill_gaps > 0].sort_values(ascending=False)
-            
+            st.subheader('역량 차이:')
+            st.write(skill_gaps.sort_values(ascending=False))
+
+            # 개선이 필요한 역량 (양수 값만)
+            improvement_needed = skill_gaps[skill_gaps > 0].sort_values(ascending=False)
             st.subheader('개선이 필요한 역량:')
-            st.write(skill_gaps)
-            
+            if not improvement_needed.empty:
+                st.write(improvement_needed)
+            else:
+                st.write("현재 모든 역량이 선택한 직무의 요구 수준을 충족하거나 초과합니다.")
+       
             # 상위 5개 개선 필요 역량
-            top_5_gaps = skill_gaps.head()
+            top_5_gaps = skill_gaps.nlargest(5)
             
         # 교육 과정 추천
         st.subheader('추천 교육 과정:')
@@ -202,19 +208,24 @@ if page == "역량 입력 및 비교":
         course_scores = pd.DataFrame(index=course_df.index, columns=['Total Score'])
         course_scores['Total Score'] = 0  # Initialize the column with zeros
 
-        for skill in top_5_gaps.index:
-            course_scores['Total Score'] += course_df[skill]
-
-        # 'Total Score' 열이 제대로 생성되었는지 확인
-        st.write("Course Scores:")
-        st.write(course_scores)
+        for skill, gap in top_5_gaps.items():
+            course_scores['Total Score'] += course_df[skill] * abs(gap)
 
         # 상위 5개 교육 과정 추천
         if not course_scores.empty and 'Total Score' in course_scores.columns:
             recommended_courses = course_scores.nlargest(5, 'Total Score')
-    
+
             for i, (index, row) in enumerate(recommended_courses.iterrows(), 1):
                 st.write(f"{i}. {course_df.loc[index, 'Course Name']} (점수: {row['Total Score']:.2f})")
+        
+                # 각 교육 과정이 어떤 스킬을 얼마나 향상시키는지 표시
+                st.write("   향상되는 스킬:")
+                for skill in top_5_gaps.index:
+                    skill_improvement = course_df.loc[index, skill]
+                    if skill_improvement > 0:
+                        st.write(f"   - {skill}: {skill_improvement:.2f}")
+        else:
+            st.warning("교육 과정 점수를 계산할 수 없습니다.")
         
             # 각 교육 과정이 어떤 스킬을 얼마나 향상시키는지 표시
             st.write("   향상되는 스킬:")
